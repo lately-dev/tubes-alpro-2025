@@ -30,3 +30,13 @@ Program ini dibangun untuk memenuhi kebutuhan pengelolaan inventaris yang secara
 
 ## Batasan Program
 - Program menggunakan array statis dengan kapasitas hingga 1000 data
+
+# Pembagian Tugas
+## Hafiza
+1. Dokumentasi kode 
+2. Laporan perkembangan kode
+3. Testing
+
+## Fazli
+1. Pengembangan program pusat
+2. Pengujian dan debugging
