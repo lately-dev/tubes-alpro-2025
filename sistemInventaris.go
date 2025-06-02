@@ -4,7 +4,7 @@ import (
 	"os"
     "os/exec"
     "runtime"
-	/*"bufio"*/
+	"bufio"
 	"strings"
 )
 
@@ -56,71 +56,69 @@ func clearScreen() {
 	cmd.Run()
 }
 
+// Fungsi untuk mengubah warna tulisan terminal
+func colorPrint(pesan string, color int) string {
+	switch color {
+	case 1:
+		return "\033[31m" + pesan + "\033[0m" 	// Warna merah
+	case 2:
+		return "\033[32m" + pesan + "\033[0m"	// Warna hijau
+	case 3:
+		return "\033[33m" + pesan + "\033[0m"	// Warna kuning
+	case 10:
+		return "\033[43m\033[30m" + pesan + "\033[0m" // Latar kuning teks hitam
+	default:
+		return pesan
+	}
+}
+
 // Prosedur untuk menampilkan pilihan menu utama
 func menu(alatLab *arrInv, nData *int) {
 	var pilihan string
-	var clear bool = true
 	
 	for {
-		if clear {
-			clearScreen()
-		}
+		clearScreen()
 		headerTampilan()
-		fmt.Println(padding + "║                 Menu Utama                  ║")
-		fmt.Println(padding + "╠══════════════════════╦══════════════════════╣")
-		fmt.Println(padding + "║ 1. Data baru         ║ 6. Urutkan data      ║")
-		fmt.Println(padding + "║ 2. Ubah data         ║ 7. Perhitungan       ║")
-		fmt.Println(padding + "║ 3. Hapus data        ║ 0. Keluar            ║")
-		fmt.Println(padding + "║ 4. Cari data         ║                      ║")
-		fmt.Println(padding + "║ 5. Tampilkan data    ║                      ║")
-		fmt.Println(padding + "╚══════════════════════╩══════════════════════╝")
-		fmt.Print(padding + "Pilih menu> ")
-		
-		fmt.Scan(&pilihan)
+		fmt.Println(padding + colorPrint("║                 Menu Utama                  ║", 3))
+		fmt.Println(padding + colorPrint("╠══════════════════════╦══════════════════════╣", 3))
+		fmt.Println(padding + colorPrint("║ 1. Data baru         ║ 6. Urutkan data      ║", 3))
+		fmt.Println(padding + colorPrint("║ 2. Ubah data         ║ 7. Perhitungan       ║", 3))
+		fmt.Println(padding + colorPrint("║ 3. Hapus data        ║ 0. Keluar            ║", 3))
+		fmt.Println(padding + colorPrint("║ 4. Cari data         ║                      ║", 3))
+		fmt.Println(padding + colorPrint("║ 5. Tampilkan data    ║                      ║", 3))
+		fmt.Println(padding + colorPrint("╚══════════════════════╩══════════════════════╝", 3))
+
+		konfirmasiMenu(&pilihan, 1)
 
 		switch pilihan {
 		case "1":
-			clear = true
 			clearScreen()
 			dataBaru(alatLab, nData)
 		case "2":
-			clear = true
 			clearScreen()
 			ubahData(alatLab, nData)
 		case "3":
-			clear = true
 			clearScreen()
 			hapusData(alatLab, nData)
 		case "4":
-			clear = true
 			clearScreen()
 			cariData(*alatLab, *nData)
 		case "5":
-			clear = true
 			clearScreen()
 			tampilkanData(*alatLab, *nData)
 		case "6":
-			clear = true
 			urutData(alatLab, *nData)
-		/*case "7":
-			clear = true
+		case "7":
 			clearScreen()
-			menuHitung(*alatLab, *nData)*/
+			menuHitung(*alatLab, *nData)
 		case "0":
 			clearScreen()
 			fmt.Println()
 			byeImage()
-			fmt.Println()
-			fmt.Println(padding + "╔═════════════════════════════════════════════╗")
-			fmt.Println(padding + "║        Terima Kasih dan Sampai Jumpa        ║")
-			fmt.Println(padding + "╚═════════════════════════════════════════════╝")
+			pesanTemplate("        Terima Kasih dan Sampai Jumpa        ", 3)
 			return
 		default:
-			clear = false
-			fmt.Println()
-			fmt.Println(padding + "╔═════════════════════════════════════════════╗")
-			fmt.Println(padding + "║  [!] Pilihan tidak valid!, mohon coba lagi  ║")
-			fmt.Println(padding + "╚═════════════════════════════════════════════╝")
+			return
 		}
 	} 
 }
@@ -128,45 +126,66 @@ func menu(alatLab *arrInv, nData *int) {
 // Prosedur untuk menampilkan header tampilan
 func headerTampilan() {
 	fmt.Println()
-	fmt.Println(padding + "╔═════════════════════════════════════════════╗")
-	fmt.Println(padding + "║   Aplikasi Sistem Inventaris Laboratorium   ║")
-	fmt.Println(padding + "║        Created by hafiza and fazli          ║")
-	fmt.Println(padding + "║        Algoritma Pemrograman 2025           ║")
-	fmt.Println(padding + "╠═════════════════════════════════════════════╣")
+	fmt.Println(padding + colorPrint("╔═════════════════════════════════════════════╗", 3))
+	fmt.Println(padding + colorPrint("║   Aplikasi Sistem Inventaris Laboratorium   ║", 3))
+	fmt.Println(padding + colorPrint("║        Created by hafiza and fazli          ║", 3))
+	fmt.Println(padding + colorPrint("║        Algoritma Pemrograman 2025           ║", 3))
+	fmt.Println(padding + colorPrint("╠═════════════════════════════════════════════╣", 3))
+}
+
+func footerTampilan(pesan string) {
+	fmt.Printf(padding + colorPrint("║%45s║\n", 3), pesan)
+	fmt.Println(padding + colorPrint("╚═════════════════════════════════════════════╝", 3))
 }
 
 // Prosedur untuk menampilkan pesan data kosong
 func pesanDataKosong() {
-	fmt.Println()
-	fmt.Println(padding + "╔═════════════════════════════════════════════╗")
-	fmt.Println(padding + "║   [!] Belum ada data, masukkan data baru    ║")
-	fmt.Println(padding + "║         untuk menggunakan fitur ini         ║")
-	fmt.Println(padding + "╚═════════════════════════════════════════════╝")
+	fmt.Println(padding + colorPrint("╔═════════════════════════════════════════════╗", 1))
+	fmt.Println(padding + colorPrint("║   [!] Belum ada data, masukkan data baru    ║", 1))
+	fmt.Println(padding + colorPrint("║         untuk menggunakan fitur ini         ║", 1))
+	fmt.Println(padding + colorPrint("╚═════════════════════════════════════════════╝", 1))
 }
 
 // Prosedur untuk menampilkan pesan data berhasil diurut
 func pesanDataTerurut(pesan string) {
 	fmt.Println()
+	fmt.Println(padding + colorPrint("╔═════════════════════════════════════════════╗", 2))
+	fmt.Printf(padding + colorPrint("║  [✓] Data sudah diurut berdasarkan %-7s  ║\n", 2), pesan)
+	fmt.Println(padding + colorPrint("╚═════════════════════════════════════════════╝", 2))
+}
+
+func pesanTemplate(pesan string, warna int) {
+	fmt.Println()
+	fmt.Println(padding + colorPrint("╔═════════════════════════════════════════════╗", warna))
+	fmt.Printf(padding + colorPrint("║%45s║\n", warna), pesan)
+	fmt.Println(padding + colorPrint("╚═════════════════════════════════════════════╝", warna))
+
+}
+
+func pesanGalat() {
+	fmt.Println()
 	fmt.Println(padding + "╔═════════════════════════════════════════════╗")
-	fmt.Printf(padding + "║  [✓] Data sudah diurut berdasarkan %-7s  ║\n", pesan)
+	fmt.Println(padding + "║                  [!] Galat                  ║")
 	fmt.Println(padding + "╚═════════════════════════════════════════════╝")
 }
+
 // Prosedur untuk menampilkan data menggunakan template tabel
-func tabelTampilan(data arrInv, hasilCari int) {
+func tabelTampilan(data arrInv, idx int) {
 	paddingTable := strings.Repeat(" ", 25)
 	
-	nama := potongString(data[hasilCari].nama, 15)
-    merek := potongString(data[hasilCari].merek, 13)
-    lokasi := potongString(data[hasilCari].lokasi, 13)
-    kondisi := potongString(data[hasilCari].kondisi, 8)
-    tanggal := potongString(data[hasilCari].tanggal, 15)
+	nama := potongString(data[idx].nama, 15)
+    merek := potongString(data[idx].merek, 13)
+    lokasi := potongString(data[idx].lokasi, 13)
+    kondisi := potongString(data[idx].kondisi, 8)
+    tanggal := potongString(data[idx].tanggal, 15)
 	
-	fmt.Println(paddingTable + "┌─────────────────┬───────────────┬───────────────┬──────────┬───────┬───────────────┬─────────────────┐")
-	fmt.Println(paddingTable + "│ Nama            │ Merek         │ Lokasi        │ Kondisi  │ Stok  │ Harga         │ Tanggal beli    │")
-	fmt.Println(paddingTable + "├─────────────────┼───────────────┼───────────────┼──────────┼───────┼───────────────┼─────────────────┤")
-	line := fmt.Sprintf("│ %-15s │ %-13s │ %-13s │ %-8s │ %5d │ %13.2f │ %-15s │", nama, merek, lokasi, kondisi, data[hasilCari].stok, data[hasilCari].harga, tanggal)
-	fmt.Println(paddingTable + line)
-	fmt.Println(paddingTable + "└─────────────────┴───────────────┴───────────────┴──────────┴───────┴───────────────┴─────────────────┘")
+	fmt.Println()
+	fmt.Println(paddingTable + colorPrint("┌─────────────────┬───────────────┬───────────────┬──────────┬───────┬───────────────┬─────────────────┐", 3))
+	fmt.Println(paddingTable + colorPrint("│ Nama            │ Merek         │ Lokasi        │ Kondisi  │ Stok  │ Harga         │ Tanggal beli    │", 3))
+	fmt.Println(paddingTable + colorPrint("├─────────────────┼───────────────┼───────────────┼──────────┼───────┼───────────────┼─────────────────┤", 3))
+	line := fmt.Sprintf("│ %-15s │ %-13s │ %-13s │ %-8s │ %5d │ %13.2f │ %-15s │", nama, merek, lokasi, kondisi, data[idx].stok, data[idx].harga, tanggal)
+	fmt.Println(paddingTable + colorPrint(line, 3))
+	fmt.Println(paddingTable + colorPrint("└─────────────────┴───────────────┴───────────────┴──────────┴───────┴───────────────┴─────────────────┘", 3))
 }
 
 // Fungsi untuk memotong string kata sesuai parameter maksKata sehingga tidak merusak antarmuka
@@ -180,9 +199,9 @@ func potongString(kata string, maksKata int) string {
 // Prosedur menjalankan konfirmasi apakah pilihan menu ini tetap dijalankan atau dihentikan
 func konfirmasiInput(pesan string, hasil *int) {
 	var konfirmasi string
-	
+
 	for {
-		fmt.Printf(padding + "%s> ", pesan)
+		fmt.Printf(padding + colorPrint("%s> ", 3), pesan)
 		fmt.Scan(&konfirmasi)
 		
 		if konfirmasi == "n" || konfirmasi == "N" {
@@ -192,10 +211,42 @@ func konfirmasiInput(pesan string, hasil *int) {
 			*hasil = 2
 			return
 		} else {
-			fmt.Println()
-			fmt.Println(padding + "╔═════════════════════════════════════════════╗")
-			fmt.Println(padding + "║         [!] Pilihan hanya berupa y/n        ║")
-			fmt.Println(padding + "╚═════════════════════════════════════════════╝")
+			pesanTemplate("         [!] Pilihan hanya berupa y/n        ", 1)
+		}
+	}
+}
+
+// Prosedur menjalankan konfirmasi akan pilihan menu yang hanya tersedia, mode dipakai untuk modularitas ketika dipakai pada menu lain
+func konfirmasiMenu(pilihan *string, mode int) {
+	for {
+		if mode == 1 {
+			fmt.Print(padding + colorPrint("Pilih menu> ", 3))
+		} else {
+			fmt.Print(padding + colorPrint("Pilih> ", 3))
+		}
+		fmt.Scan(pilihan)
+		
+		if mode == 1 {
+			switch *pilihan {
+			case "0", "1", "2", "3", "4", "5", "6", "7":
+				return
+			default:
+				pesanTemplate("  [!] Pilihan tidak valid!, mohon coba lagi  ", 1)
+			}
+		} else if mode == 2 {
+			switch *pilihan {
+			case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12":
+				return
+			default:
+				pesanTemplate("  [!] Pilihan tidak valid!, mohon coba lagi  ", 1)
+			}
+		} else if mode == 3 {
+			switch *pilihan {
+			case "0","1", "2", "3", "4", "5":
+				return
+			default:
+				pesanTemplate("  [!] Pilihan tidak valid!, mohon coba lagi  ", 1)
+			}
 		}
 	}
 }
@@ -203,31 +254,46 @@ func konfirmasiInput(pesan string, hasil *int) {
 // Prosedur untuk menambahkan data inventaris baru
 func dataBaru(data *arrInv, n *int) {
 	var hasil int
+	var reader = bufio.NewReader(os.Stdin)
+	//var inputRaw string
+	
 	for {
 		if *n >= maxArr {
-			fmt.Println(padding + "╔═════════════════════════════════════════════╗")
-			fmt.Println(padding + "║                     [!]                     ║")
-			fmt.Println(padding + "║ Data sudah penuh! Anda bisa hapus data lain ║")
-			fmt.Println(padding + "║           untuk menambah data baru          ║")
-			fmt.Println(padding + "║    (tekan apapun lalu Enter untuk keluar)   ║")
-			fmt.Println(padding + "╚═════════════════════════════════════════════╝")
+			fmt.Println()
+			fmt.Println(padding + colorPrint("╔═════════════════════════════════════════════╗", 1))
+			fmt.Println(padding + colorPrint("║                     [!]                     ║", 1))
+			fmt.Println(padding + colorPrint("║ Data sudah penuh! Anda bisa hapus data lain ║", 1))
+			fmt.Println(padding + colorPrint("║           untuk menambah data baru          ║", 1))
+			fmt.Println(padding + colorPrint("║          (tekan Enter untuk keluar)         ║", 1))
+			fmt.Println(padding + colorPrint("╚═════════════════════════════════════════════╝", 1))
 			
-			var dummyInput string
-			fmt.Scan(&dummyInput)
+			_, _ = reader.ReadString('\n')	// Blank identifier (_) untuk tidak menyimpan input
 			return
 		}
 		
 		headerTampilan()
-		fmt.Println(padding + "║            Menu Utama > Data baru           ║")
-		fmt.Println(padding + "╚═════════════════════════════════════════════╝")
+		footerTampilan("            Menu Utama > Data baru           ")
 		fmt.Print(padding +  "Nama alat\t : ")
 		fmt.Scan(&data[*n].nama)
+		/*inputRaw, _ = reader.ReadString('\n')*/
+		
 		fmt.Print(padding + "Merek alat\t : ")
 		fmt.Scan(&data[*n].merek)
+		/*inputRaw, _ = reader.ReadString('\n')
+		(*data)[*n].merek = strings.TrimSpace(inputRaw)*/
+		
 		fmt.Print(padding + "Lokasi alat\t : ")
 		fmt.Scan(&data[*n].lokasi)
+		/*inputRaw, _ = reader.ReadString('\n')
+		(*data)[*n].lokasi = strings.TrimSpace(inputRaw)*/
+		
 		fmt.Print(padding + "Kondisi alat\t : ")
 		fmt.Scan(&data[*n].kondisi)
+		/*if data[*n].kondisi != "Baik" || data[*n].kondisi != "baik" || data[*n].kondisi != "Sedang" || data[*n].kondisi != "sedang" || data[*n].kondisi != "Buruk" || data[*n].kondisi != "buruk" {
+			for {
+			
+			}
+		}*/
 		fmt.Print(padding + "Stok alat\t : ")
 		fmt.Scan(&data[*n].stok)
 		fmt.Print(padding + "Harga alat\t : ")
@@ -245,9 +311,7 @@ func dataBaru(data *arrInv, n *int) {
 		} else if hasil == 2 {
 			clearScreen()
 		} else {
-			fmt.Println(padding + "╔═════════════════════════════════════════════╗")
-			fmt.Println(padding + "║                  [!] Galat                  ║")
-			fmt.Println(padding + "╚═════════════════════════════════════════════╝")
+			pesanGalat()
 			return
 		}
 	}
@@ -257,23 +321,19 @@ func dataBaru(data *arrInv, n *int) {
 func ubahData(data *arrInv, n *int) {
 	var dataDicari string
 	var dataDiubah [1]inventaris
-	var hasil, hasilCari int
+	var hasil, idx int
 	
 	for {
 		headerTampilan()
-		fmt.Println(padding + "║            Menu Utama > Ubah data           ║")
-		fmt.Println(padding + "╚═════════════════════════════════════════════╝")
+		footerTampilan("            Menu Utama > Ubah data           ")
 		fmt.Print(padding + "Cari nama data: ")
 		fmt.Scan(&dataDicari)
 		
-		hasilCari = sequentialSearch(*data, *n, dataDicari)
+		idx = sequentialSearch(*data, *n, dataDicari)
 		
-		if hasilCari >= 0 {
-			tabelTampilan(*data, hasilCari)
-			fmt.Println()
-			fmt.Println(padding + "╔═════════════════════════════════════════════╗")
-			fmt.Println(padding + "║     [i] Isi perubahan data di bawah ini     ║")
-			fmt.Println(padding + "╚═════════════════════════════════════════════╝")
+		if idx >= 0 {
+			tabelTampilan(*data, idx)
+			pesanTemplate("     [i] Isi perubahan data di bawah ini     ", 3)
 			fmt.Print(padding +  "Nama alat\t : ")
 			fmt.Scan(&dataDiubah[0].nama)
 			fmt.Print(padding + "Merek alat\t : ")
@@ -289,22 +349,19 @@ func ubahData(data *arrInv, n *int) {
 			fmt.Print(padding + "Tanggal pembelian (hh/bb/tttt): ")
 			fmt.Scan(&dataDiubah[0].tanggal)
 			
-			data[hasilCari].nama = dataDiubah[0].nama
-			data[hasilCari].merek = dataDiubah[0].merek 
-			data[hasilCari].lokasi = dataDiubah[0].lokasi
-			data[hasilCari].kondisi = dataDiubah[0].kondisi
-			data[hasilCari].tanggal = dataDiubah[0].tanggal
-			data[hasilCari].stok = dataDiubah[0].stok
-			data[hasilCari].harga = dataDiubah[0].harga
+			data[idx].nama = dataDiubah[0].nama
+			data[idx].merek = dataDiubah[0].merek 
+			data[idx].lokasi = dataDiubah[0].lokasi
+			data[idx].kondisi = dataDiubah[0].kondisi
+			data[idx].tanggal = dataDiubah[0].tanggal
+			data[idx].stok = dataDiubah[0].stok
+			data[idx].harga = dataDiubah[0].harga
 			
 			fmt.Println()
 			konfirmasiInput("Ubah data lagi? (y/n)", &hasil)
 			
 		} else {
-			fmt.Println()
-			fmt.Println(padding + "╔═════════════════════════════════════════════╗")
-			fmt.Println(padding + "║          [!] Data tidak ditemukan           ║")
-			fmt.Println(padding + "╚═════════════════════════════════════════════╝")
+			pesanTemplate("          [!] Data tidak ditemukan           ", 1)
 			konfirmasiInput("Cari data lagi? (y/n)", &hasil)
 		}
 		
@@ -314,12 +371,10 @@ func ubahData(data *arrInv, n *int) {
 		} else if hasil == 2 {
 			clearScreen()
 		} else {
-			fmt.Println(padding + "╔═════════════════════════════════════════════╗")
-			fmt.Println(padding + "║                  [!] Galat                  ║")
-			fmt.Println(padding + "╚═════════════════════════════════════════════╝")
+			pesanGalat()
+			return
 		}
 	}
-
 }
 
 // Prosedur untuk menghapus data dengan menimpa data dihapus dan perulangan untuk memindahkannya ke kiri dan mengubah nilai data aktif
@@ -329,19 +384,16 @@ func hapusData(data *arrInv, n *int) {
 	
 	for {
 		headerTampilan()
-		fmt.Println(padding + "║           Menu Utama > Hapus data           ║")
-		fmt.Println(padding + "╚═════════════════════════════════════════════╝")
+		footerTampilan("           Menu Utama > Hapus data           ")
 		fmt.Print(padding + "Cari nama data: ")
 		fmt.Scan(&dataDicari)
-		fmt.Println()
 		
 		idx = sequentialSearch(*data, *n, dataDicari)
 		
 		if idx >= 0 {
-			fmt.Println()
 			tabelTampilan(*data, idx)
-			konfirmasiInput("[!] Hapus? (y/n)", &hasil)
 			fmt.Println()
+			konfirmasiInput("[!] Hapus? (y/n)", &hasil)
 			
 			if hasil == 2 {
 				for i := idx; i < *n-1; i++ {
@@ -349,20 +401,14 @@ func hapusData(data *arrInv, n *int) {
 				}
 				(*n)--
 				
-				fmt.Println(padding + "╔═════════════════════════════════════════════╗")
-				fmt.Println(padding + "║         [✓] Data berhasil di hapus          ║")
-				fmt.Println(padding + "╚═════════════════════════════════════════════╝")
+				pesanTemplate("         [✓] Data berhasil di hapus          ", 2)
 				konfirmasiInput("Hapus data lagi? (y/n)", &hasil)
 			} else {
-				fmt.Println(padding + "╔═════════════════════════════════════════════╗")
-				fmt.Println(padding + "║       [!] Penghapusan data dibatalkan       ║")
-				fmt.Println(padding + "╚═════════════════════════════════════════════╝")
+				pesanTemplate("       [!] Penghapusan data dibatalkan       ", 1)
 				konfirmasiInput("Cari data lagi? (y/n)", &hasil)	
 			}
 		} else {
-			fmt.Println(padding + "╔═════════════════════════════════════════════╗")
-			fmt.Println(padding + "║          [!] Data tidak ditemukan           ║")
-			fmt.Println(padding + "╚═════════════════════════════════════════════╝")
+			pesanTemplate("          [!] Data tidak ditemukan           ", 1)
 			konfirmasiInput("Cari data lagi? (y/n)", &hasil)
 		}
 		
@@ -372,9 +418,7 @@ func hapusData(data *arrInv, n *int) {
 		} else if hasil == 2 {
 			clearScreen()
 		} else {
-			fmt.Println(padding + "╔═════════════════════════════════════════════╗")
-			fmt.Println(padding + "║                  [!] Galat                  ║")
-			fmt.Println(padding + "╚═════════════════════════════════════════════╝")
+			pesanGalat()
 			return
 		}
 	}
@@ -383,24 +427,21 @@ func hapusData(data *arrInv, n *int) {
 // Prosedur untuk mencari data dengan menggunakan logika if-else ketika data ditemukan
 func cariData(data arrInv, n int) {
 	var x string
-	var hasil int
+	var idx, hasil int
 	
 	for {
 		headerTampilan()
-		fmt.Println(padding + "║           Menu Utama > Cari data            ║")
-		fmt.Println(padding + "╚═════════════════════════════════════════════╝")
+		footerTampilan("           Menu Utama > Cari data            ")
 		fmt.Print(padding + "Cari nama data: ")
 		fmt.Scan(&x)
-		fmt.Println()
 		
-		if sequentialSearch(data, n, x) >= 0 {
-			fmt.Println(padding + "╔═════════════════════════════════════════════╗")
-			fmt.Println(padding + "║             [✓] Data ditemukan              ║")
-			fmt.Println(padding + "╚═════════════════════════════════════════════╝")
+		idx = sequentialSearch(data, n, x)
+		
+		if idx >= 0 {
+			tabelTampilan(data, idx)
+			pesanTemplate("             [✓] Data ditemukan              ", 2)
 		} else {
-			fmt.Println(padding + "╔═════════════════════════════════════════════╗")
-			fmt.Println(padding + "║          [!] Data tidak ditemukan           ║")
-			fmt.Println(padding + "╚═════════════════════════════════════════════╝")
+			pesanTemplate("          [!] Data tidak ditemukan           ", 1)
 		}
 		
 		konfirmasiInput("Cari data lagi? (y/n)", &hasil)
@@ -411,9 +452,7 @@ func cariData(data arrInv, n int) {
 		} else if hasil == 2 {
 			clearScreen()
 		} else {
-			fmt.Println(padding + "╔═════════════════════════════════════════════╗")
-			fmt.Println(padding + "║                  [!] Galat                  ║")
-			fmt.Println(padding + "╚═════════════════════════════════════════════╝")
+			pesanGalat()
 			return
 		}
 	}
@@ -444,20 +483,18 @@ func tampilkanData(data arrInv, n int) {
 	paddingTable := strings.Repeat(" ", 22)
 	
 	headerTampilan()
-	fmt.Println(padding + "║         Menu Utama > Tampilkan data         ║")
-	fmt.Println(padding + "╚═════════════════════════════════════════════╝")
+	footerTampilan("         Menu Utama > Tampilkan data         ")
+	fmt.Println()
 	
 	if n == 0 {
-		fmt.Println()
 		pesanDataKosong()
-		fmt.Print(padding + "Keluar? (tekan apapun lalu Enter)> ")
+		fmt.Print(padding + colorPrint("Keluar? (tekan apapun lalu Enter)> ", 3))
 		fmt.Scan(&dummyInput)
 		return
-	} else {	
-		fmt.Println()
-		fmt.Println(paddingTable + "┌─────┬─────────────────┬───────────────┬───────────────┬──────────┬───────┬─────────────────┬─────────────────┐")
-		fmt.Println(paddingTable + "│ No. │ Nama            │ Merek         │ Lokasi        │ Kondisi  │ Stok  │ Harga           │ Tanggal beli    │")
-		fmt.Println(paddingTable + "├─────┼─────────────────┼───────────────┼───────────────┼──────────┼───────┼─────────────────┼─────────────────┤")
+	} else {
+		fmt.Println(paddingTable + colorPrint("┌─────┬─────────────────┬───────────────┬───────────────┬──────────┬───────┬─────────────────┬─────────────────┐", 3))
+		fmt.Println(paddingTable + colorPrint("│ No. │ Nama            │ Merek         │ Lokasi        │ Kondisi  │ Stok  │ Harga           │ Tanggal beli    │", 3))
+		fmt.Println(paddingTable + colorPrint("├─────┼─────────────────┼───────────────┼───────────────┼──────────┼───────┼─────────────────┼─────────────────┤", 3))
 
 		for i := 0; i < n; i++ {
 			numberData = numberData + 1
@@ -468,12 +505,12 @@ func tampilkanData(data arrInv, n int) {
 			tanggal := potongString(data[i].tanggal, 15)
 			
 			line := fmt.Sprintf("│  %2d │ %-15s │ %-13s │ %-13s │ %-8s │ %5d │ %15.2f │ %-15s │", numberData, nama, merek, lokasi, kondisi, data[i].stok, data[i].harga, tanggal)
-			fmt.Println(paddingTable + line)
+			fmt.Println(paddingTable + colorPrint(line, 3))
 		}
 
-		fmt.Println(paddingTable + "└─────┴─────────────────┴───────────────┴───────────────┴──────────┴───────┴─────────────────┴─────────────────┘")
+		fmt.Println(paddingTable + colorPrint("└─────┴─────────────────┴───────────────┴───────────────┴──────────┴───────┴─────────────────┴─────────────────┘", 3))
 		fmt.Println()
-		fmt.Print(padding + "Keluar? (tekan apapun lalu Enter)> ")
+		fmt.Print(padding + colorPrint("Keluar? (tekan apapun lalu Enter)> ", 3))		
 		fmt.Scan(&dummyInput)
 		return
 	}
@@ -482,98 +519,78 @@ func tampilkanData(data arrInv, n int) {
 
 // Prosedur untuk menampilkan menu untuk mengurutkan data
 func urutData(data *arrInv, n int) {
-	var pilihan, hasil int
-	var dummyInput string
-	var clear bool = true
-	var input bool = false
+	var hasil int
+	var pilihan, dummyInput string
 	
 	for {
-		if clear {
-			clearScreen()
-		}
+		clearScreen()
 		headerTampilan()
-		fmt.Println(padding + "║          Menu Utama > Urutkan data          ║")
+		fmt.Println(padding + colorPrint("║          Menu Utama > Urutkan data          ║", 3))
 		
 		if n == 0 {
-			fmt.Println(padding + "╚═════════════════════════════════════════════╝")
+			fmt.Println(padding + colorPrint("╚═════════════════════════════════════════════╝", 3))
+			fmt.Println()
 			pesanDataKosong()
-			fmt.Print(padding + "Keluar? (tekan apapun lalu Enter)> ")
+			fmt.Print(padding + colorPrint("Keluar? (tekan apapun lalu Enter)> ", 3))
 			fmt.Scan(&dummyInput)
 			return
 		} else {
-			fmt.Println(padding + "╠═════════════════════════════════════════════╣")
-			fmt.Println(padding + "║ 1. Urutkan dari nama (A-Z)                  ║")
-			fmt.Println(padding + "║ 2. Urutkan dari nama (Z-A)                  ║")
-			fmt.Println(padding + "║ 3. Urutkan dari merek (A-Z)                 ║")
-			fmt.Println(padding + "║ 4. Urutkan dari merek (Z-A)                 ║")
-			fmt.Println(padding + "║ 5. Urutkan dari lokasi (A-Z)                ║")
-			fmt.Println(padding + "║ 6. Urutkan dari lokasi (Z-A)                ║")
-			fmt.Println(padding + "║ 7. Urutkan dari kondisi (A-Z)               ║")
-			fmt.Println(padding + "║ 8. Urutkan dari kondisi (Z-A)               ║")
-			fmt.Println(padding + "║ 9. Urutkan dari stok (menaik)               ║")
-			fmt.Println(padding + "║ 10. Urutkan dari stok (menurun)             ║")
-			fmt.Println(padding + "║ 11. Urutkan dari harga (menaik)             ║")
-			fmt.Println(padding + "║ 12. Urutkan dari harga (menurun)            ║")
-			fmt.Println(padding + "║ 0. Kembali                                  ║")
-			fmt.Println(padding + "╚═════════════════════════════════════════════╝")
+			fmt.Println(padding + colorPrint("╠═════════════════════════════════════════════╣", 3))
+			fmt.Println(padding + colorPrint("║ 1. Urutkan dari nama (A-Z)                  ║", 3))
+			fmt.Println(padding + colorPrint("║ 2. Urutkan dari nama (Z-A)                  ║", 3))
+			fmt.Println(padding + colorPrint("║ 3. Urutkan dari merek (A-Z)                 ║", 3))
+			fmt.Println(padding + colorPrint("║ 4. Urutkan dari merek (Z-A)                 ║", 3))
+			fmt.Println(padding + colorPrint("║ 5. Urutkan dari lokasi (A-Z)                ║", 3))
+			fmt.Println(padding + colorPrint("║ 6. Urutkan dari lokasi (Z-A)                ║", 3))
+			fmt.Println(padding + colorPrint("║ 7. Urutkan dari kondisi (A-Z)               ║", 3))
+			fmt.Println(padding + colorPrint("║ 8. Urutkan dari kondisi (Z-A)               ║", 3))
+			fmt.Println(padding + colorPrint("║ 9. Urutkan dari stok (menaik)               ║", 3))
+			fmt.Println(padding + colorPrint("║ 10. Urutkan dari stok (menurun)             ║", 3))
+			fmt.Println(padding + colorPrint("║ 11. Urutkan dari harga (menaik)             ║", 3))
+			fmt.Println(padding + colorPrint("║ 12. Urutkan dari harga (menurun)            ║", 3))
+			fmt.Println(padding + colorPrint("║ 0. Kembali                                  ║", 3))
+			fmt.Println(padding + colorPrint("╚═════════════════════════════════════════════╝", 3))
 		
-			
-			fmt.Print(padding + "Pilih> ")
-			fmt.Scan(&pilihan)
+			konfirmasiMenu(&pilihan, 2)
 			
 			selectionSort(data, n, pilihan)
 			
-			if pilihan >= 1 && pilihan <= 2 {
+			switch pilihan {
+			case "1", "2":
 				pesanDataTerurut("nama   ")
-				input = true
-			} else if pilihan >= 3 && pilihan <= 4 {
+			case "3", "4":
 				pesanDataTerurut("merek  ")
-				input = true
-			} else if pilihan >= 5 && pilihan <= 6 {
+			case "5", "6":
 				pesanDataTerurut("lokasi ")
-				input = true
-			} else if pilihan >= 7 && pilihan <= 8 {
+			case "7", "8":
 				pesanDataTerurut("kondisi")
-				input = true
-			} else if pilihan >= 9 && pilihan <= 10 {
+			case "9", "10":
 				pesanDataTerurut("stok   ")
-				input = true
-			} else if pilihan >= 11 && pilihan <= 12 {
+			case "11", "12":
 				pesanDataTerurut("harga  ")
-				input = true
-			} else if pilihan == 0{
+			case "0":
 				return
-			} else {
-				clear = false
-				input = false
-				fmt.Println()
-				fmt.Println(padding + "╔═════════════════════════════════════════════╗")
-				fmt.Println(padding + "║  [!] Pilihan tidak valid!, mohon coba lagi  ║")
-				fmt.Println(padding + "╚═════════════════════════════════════════════╝")
+			default:
+				return
 			}
 			
-			
-			if input {
-				konfirmasiInput("Urutkan data lagi? (y/n)", &hasil)
-			
-				if hasil == 1 {
-					clearScreen()
-					return
-				} else if hasil == 2 {
-					clearScreen()
-				} else {
-					fmt.Println(padding + "╔═════════════════════════════════════════════╗")
-					fmt.Println(padding + "║                  [!] Galat                  ║")
-					fmt.Println(padding + "╚═════════════════════════════════════════════╝")
-					return
-				}
+			konfirmasiInput("Urutkan data lagi? (y/n)", &hasil)
+		
+			if hasil == 1 {
+				clearScreen()
+				return
+			} else if hasil == 2 {
+				clearScreen()
+			} else {
+				pesanGalat()
+				return
 			}
 		}
 	}
 }
 
 // Prosedur untuk mengubah urutan data menggunakan Selection Sort
-func selectionSort(data *arrInv, n, x int) {
+func selectionSort(data *arrInv, n int, x string) {
 	var i, idx int
 	var temp inventaris
 	var pass int = 1
@@ -584,51 +601,51 @@ func selectionSort(data *arrInv, n, x int) {
 		
 		for i < n {
 			switch x {
-			case 1:
+			case "1":
 			if (*data)[i].nama < (*data)[idx].nama{
 				idx = i
 			}
-			case 2:
+			case "2":
 			if (*data)[i].nama > (*data)[idx].nama{
 				idx = i
 			}
-			case 3:
+			case "3":
 			if (*data)[i].merek < (*data)[idx].merek{
 				idx = i
 			}
-			case 4:
+			case "4":
 			if (*data)[i].merek > (*data)[idx].merek{
 				idx = i
 			}
-			case 5:
+			case "5":
 			if (*data)[i].lokasi < (*data)[idx].lokasi{
 				idx = i
 			}
-			case 6:
+			case "6":
 			if (*data)[i].lokasi > (*data)[idx].lokasi{
 				idx = i
 			}
-			case 7:
+			case "7":
 			if (*data)[i].kondisi < (*data)[idx].kondisi{
 				idx = i
 			}
-			case 8:
+			case "8":
 			if (*data)[i].kondisi > (*data)[idx].kondisi{
 				idx = i
 			}
-			case 9:
+			case "9":
 			if (*data)[i].stok < (*data)[idx].stok{
 				idx = i
 			}
-			case 10:
+			case "10":
 			if (*data)[i].stok > (*data)[idx].stok{
 				idx = i
 			}
-			case 11:
+			case "11":
 			if (*data)[i].harga < (*data)[idx].harga{
 				idx = i
 			}
-			case 12:
+			case "12":
 			if (*data)[i].harga > (*data)[idx].harga{
 				idx = i
 			}
@@ -645,60 +662,68 @@ func selectionSort(data *arrInv, n, x int) {
 
 // Prosedur untuk menampilkan menu dengan beberapa pilihan perhitungan dasar
 func menuHitung(data arrInv, n int) {
-	var pilihan, hasil int
-	var dummyInput string
-	var clear bool = true
-	var input bool = false
+	var hasil int
+	var pilihan, dummyInput string
 		
 	for {
-		if clear {
-			clearScreen()
-		}
+		clearScreen()
 		headerTampilan()
-		fmt.Println(padding + "║          Menu Utama > Urutkan data          ║")
+		fmt.Println(padding + colorPrint("║          Menu Utama > Urutkan data          ║", 3))
 		
 		if n == 0 {
-			fmt.Println(padding + "╚═════════════════════════════════════════════╝")
+			fmt.Println(padding + colorPrint("╚═════════════════════════════════════════════╝", 3))
 			pesanDataKosong()
-			fmt.Print(padding + "Keluar? (tekan apapun lalu Enter)> ")
+			fmt.Print(padding + colorPrint("Keluar? (tekan apapun lalu Enter)> ", 3))
 			fmt.Scan(&dummyInput)
 			return
 		} else {
-			fmt.Println(padding + "╠═════════════════════════════════════════════╣")
-			fmt.Println(padding + "║ 1. Hitung kondisi barang 'baik'             ║")
-			fmt.Println(padding + "║ 2. Hitung kondisi barang 'buruk'            ║")
-			fmt.Println(padding + "║ 0. Kembali                                  ║")
-			fmt.Println(padding + "╚═════════════════════════════════════════════╝")
-		
+			fmt.Println(padding + colorPrint("╠═════════════════════════════════════════════╣", 3))
+			fmt.Println(padding + colorPrint("║ 1. Hitung kondisi barang 'baik'             ║", 3))
+			fmt.Println(padding + colorPrint("║ 2. Hitung kondisi barang 'buruk'            ║", 3))
+			fmt.Println(padding + colorPrint("║ 3. Hitung nilai kerugian barang 'buruk'     ║", 3))
+			fmt.Println(padding + colorPrint("║ 0. Kembali                                  ║", 3))
+			fmt.Println(padding + colorPrint("╚═════════════════════════════════════════════╝", 3))
+
+			konfirmasiMenu(&pilihan, 3)
 			
-			fmt.Print(padding + "Pilih> ")
-			fmt.Scan(&pilihan)
+			switch pilihan {
+			case "1":
+				fmt.Println()
+				fmt.Println(padding + "╔═════════════════════════════════════════════╗")
+				fmt.Printf(padding + "║     Ada %4d barang dengan kondisi baik     ║\n", hitungKondisi(data, n, "Baik"))
+				fmt.Println(padding + "╚═════════════════════════════════════════════╝")
+			case "2":
+				fmt.Println()
+				fmt.Println(padding + "╔═════════════════════════════════════════════╗")
+				fmt.Printf(padding + "║     Ada %4d barang dengan kondisi buruk    ║\n", hitungKondisi(data, n, "Buruk"))
+				fmt.Println(padding + "╚═════════════════════════════════════════════╝")
+			case "0":
+				return
+			}
 			
-			if
+			konfirmasiInput("Hitung data lagi? (y/n)", &hasil)
 			
-			if input {
-				konfirmasiInput("Hitung data lagi? (y/n)", &hasil)
-			
-				if hasil == 1 {
-					clearScreen()
-					return
-				} else if hasil == 2 {
-					clearScreen()
-				} else {
-					fmt.Println(padding + "╔═════════════════════════════════════════════╗")
-					fmt.Println(padding + "║                  [!] Galat                  ║")
-					fmt.Println(padding + "╚═════════════════════════════════════════════╝")
-					return
-				}
+			if hasil == 1 {
+				clearScreen()
+				return
+			} else if hasil == 2 {
+				clearScreen()
+			} else {
+				pesanGalat()
+				return
 			}
 		}
 	}
 }
 
-func hitungKondisi(data arrInv, n int) int {
-	var jumlahKondisi, N int
+func hitungKondisi(data arrInv, n int, kondisi string) int {
+	var jumlahKondisi int
 	
-	jumlahKondisi = 1
+	for i := 0; i < n; i++ {
+		if data[i].kondisi == kondisi {
+			jumlahKondisi++
+		}
+	}
 	
 	return jumlahKondisi
 }
@@ -723,29 +748,29 @@ func catImage() {
 }
 
 func byeImage() {
-	fmt.Println(padding + "⠀⠀⠀⠀⠀⠀⠀⠀ ⠀⠀⠀⠀⠀⠀⠀⠀⠀ ⠀⠀⠀⠀⠀⠀⣀⣠⣤⣴⣶⣦⣤⣄⡀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀")
-	fmt.Println(padding + "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣤⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀")
-	fmt.Println(padding + "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀")
-	fmt.Println(padding + "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⠀⠀⠀⠀⠀⠀⠀⠀")
-	fmt.Println(padding + "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⠀⠀⠀⠀⠀⠀⠀")
-	fmt.Println(padding + "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡆⠀⠀⠀⠀⠀⠀")
-	fmt.Println(padding + "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀")
-	fmt.Println(padding + "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀")
-	fmt.Println(padding + "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀")
-	fmt.Println(padding + "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⠀⠀⠀⠀⠀")
-	fmt.Println(padding + "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣸⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠋⠓⢾⣿⣿⣹⢹⣿⡟⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀")
-	fmt.Println(padding + "⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⣿⣿⣿⣿⣿⣿⣿⣿⣋⣑⡒⠦⣼⢻⣿⡇⢸⣿⠃⢸⣿⡟⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀")
-	fmt.Println(padding + "⠀⠀⠀⠀⠀⠀⠀⢀⣀⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⠈⠉⠻⣷⣼⠚⡇⠃⢸⣿⠀⢸⣿⠉⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀")
-	fmt.Println(padding + "⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠙⠀⠙⠇⠀⢿⠀⢸⣿⣤⣸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀")
-	fmt.Println(padding + "⠀⠀⠈⠉⠐⠂⠄⠀⠀⣿⡿⣿⣿⣿⣿⣿⣿⣿⢿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⠛⠛⠛⠷⣿⢹⣿⣿⣿⣿⣿⣿⣿⣿⣿⡄⠀⠀⠀⠀")
-	fmt.Println(padding + "⠀⠀⠀⣀⣠⡤⠤⠐⠺⣿⡏⢻⣿⣿⣿⣿⣿⣿⠀⢣⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀")
-	fmt.Println(padding + "⠄⠂⠈⢀⣀⡠⠤⠒⠚⡟⣿⠙⣿⣿⣿⣿⣿⣿⡇⠀⠳⢤⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣰⡿⢿⣿⣿⣿⣿⢻⣿⣿⣿⠁⠀⠀⠀⠀")
-	fmt.Println(padding + "⠤⠒⠉⠁⠀⠀⠀⠀⣀⣧⠼⡆⠻⣿⣿⢻⣿⣿⣿⣆⠀⠈⠣⠈⠑⠢⢄⠀⠀⠀⠀⠀⣠⣞⡯⢤⣿⣿⣿⣿⡧⣼⣿⣿⢻⡀⠀⠀⠀⠀")
-	fmt.Println(padding + "⠀⠀⠀⠀⢀⡠⠖⠉⠁⢸⡀⢹⡄⠙⢿⡟⣿⣿⣿⠈⢳⡀⠀⠀⠈⠉⠉⠀⢀⣠⡴⠊⢡⠀⠀⣸⣿⣿⣿⣿⠁⢿⣿⣏⡬⣧⠀⠀⠀")
-	fmt.Println(padding + "⠀⢀⡠⠖⠉⠀⠀⠀⠀⠀⢳⠋⢈⠃⡌⠙⠻⣿⣿⡀⠈⢽⣦⠤⠤⠒⠒⠊⡹⠀⢱⠀⡏⢀⠜⣿⣿⡟⡹⠃⠀⠘⣿⡇⠀⣸⠀⠀⠀⠀")
-	fmt.Println(padding + "⣴⡉⠀⠀⠀⠀⠀⠀⠀⢀⠇⠀⣠⡼⠀⠀⠀⠙⠎⠃⠀⠀⠈⠠⣄⠀⠀⢰⠁⠀⢈⡟⠉⠁⣴⡿⠋⠐⠁⣀⠞⡰⠉⠁⢸⡇⠀⠀⠀⠀")
-	fmt.Println(padding + "⢇⢣⡀⠀⠀⠀⢠⠀⠀⠸⠀⢠⣿⠃⠳⣄⠀⠀⢰⠀⠀⠀⠀⠀⠀⠉⡴⠀⠀⠀⣸⠁⠀⠀⠁⢰⠀⡄⢠⠏⡰⠁⠀⠀⣿⠁⠀⠀⠀⠀")
-	fmt.Println(padding + "⠈⠦⠳⡀⠀⠀⠀⣇⠀⡇⠀⢸⣿⠀⠀⠈⠑⠒⠚⠀⣦⠀⠀⠀⠀⣰⣁⠧⠔⠉⡏⠀⠀⠀⠀⢸⠀⡇⡜⣴⠁⠀⠀⠀⡟⠀⠀⠀⠀⠀")
-	fmt.Println(padding + "⠀⠀⠀⣬⣦⡀⠀⠸⡀⡇⠀⠀⠙⣆⠀⠀⠀⠀⠀⢀⡈⠳⣀⣠⠞⠁⣀⠀⠀⡜⠀⠀⠀⠀⠀⡜⡆⣷⠟⠈⡄⠀⠀⢸⠃⠀⠀⠀⠀⠀")
-	fmt.Println(padding + "⠀⠀⠀⠁⠙⠟⠦⡀⢳⡇⠀⠀⡆⠈⢆⠀⠀⠀⠀⠀⣀⣀⣈⣀⠀⠉⠀⠀⢸⡳⢄⠀⠀⠀⢀⠇⢱⡏⠀⠀⡇⠀⠀⣿⠀⠀⠀⠀⠀⠀")
+	fmt.Println(padding + colorPrint("⠀⠀⠀⠀⠀⠀⠀⠀ ⠀⠀⠀⠀⠀⠀⠀⠀⠀ ⠀⠀⠀⠀⠀⠀⣀⣠⣤⣴⣶⣦⣤⣄⡀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀", 10))
+	fmt.Println(padding + colorPrint("⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣤⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀", 10))
+	fmt.Println(padding + colorPrint("⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀", 10))
+	fmt.Println(padding + colorPrint("⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⠀⠀⠀⠀⠀⠀⠀⠀", 10))
+	fmt.Println(padding + colorPrint("⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⠀⠀⠀⠀⠀⠀⠀", 10))
+	fmt.Println(padding + colorPrint("⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡆⠀⠀⠀⠀⠀⠀", 10))
+	fmt.Println(padding + colorPrint("⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀", 10))
+	fmt.Println(padding + colorPrint("⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀", 10))
+	fmt.Println(padding + colorPrint("⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀", 10))
+	fmt.Println(padding + colorPrint("⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⠀⠀⠀⠀⠀", 10))
+	fmt.Println(padding + colorPrint("⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣸⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠋⠓⢾⣿⣿⣹⢹⣿⡟⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀", 10))
+	fmt.Println(padding + colorPrint("⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⣿⣿⣿⣿⣿⣿⣿⣿⣋⣑⡒⠦⣼⢻⣿⡇⢸⣿⠃⢸⣿⡟⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀", 10))
+	fmt.Println(padding + colorPrint("⠀⠀⠀⠀⠀⠀⠀⢀⣀⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⠈⠉⠻⣷⣼⠚⡇⠃⢸⣿⠀⢸⣿⠉⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀", 10))
+	fmt.Println(padding + colorPrint("⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠙⠀⠙⠇⠀⢿⠀⢸⣿⣤⣸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀", 10))
+	fmt.Println(padding + colorPrint("⠀⠀⠈⠉⠐⠂⠄⠀⠀⣿⡿⣿⣿⣿⣿⣿⣿⣿⢿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⠛⠛⠛⠷⣿⢹⣿⣿⣿⣿⣿⣿⣿⣿⣿⡄⠀⠀⠀⠀", 10))
+	fmt.Println(padding + colorPrint("⠀⠀⠀⣀⣠⡤⠤⠐⠺⣿⡏⢻⣿⣿⣿⣿⣿⣿⠀⢣⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀", 10))
+	fmt.Println(padding + colorPrint("⠄⠂⠈⢀⣀⡠⠤⠒⠚⡟⣿⠙⣿⣿⣿⣿⣿⣿⡇⠀⠳⢤⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣰⡿⢿⣿⣿⣿⣿⢻⣿⣿⣿⠁⠀⠀⠀⠀", 10))
+	fmt.Println(padding + colorPrint("⠤⠒⠉⠁⠀⠀⠀⠀⣀⣧⠼⡆⠻⣿⣿⢻⣿⣿⣿⣆⠀⠈⠣⠈⠑⠢⢄⠀⠀⠀⠀⠀⣠⣞⡯⢤⣿⣿⣿⣿⡧⣼⣿⣿⢻⡀⠀⠀⠀⠀", 10))
+	fmt.Println(padding + colorPrint("⠀⠀⠀⠀⢀⡠⠖⠉⠁⢸⡀⢹⡄⠙⢿⡟⣿⣿⣿⠈⢳⡀⠀⠀⠈⠉⠉⠀⢀⣠⡴⠊⢡⠀⠀⣸⣿⣿⣿⣿⠁⢿⣿⣏⡬⣧⠀⠀⠀ ", 10))
+	fmt.Println(padding + colorPrint("⠀⢀⡠⠖⠉⠀⠀⠀⠀⠀⢳⠋⢈⠃⡌⠙⠻⣿⣿⡀⠈⢽⣦⠤⠤⠒⠒⠊⡹⠀⢱⠀⡏⢀⠜⣿⣿⡟⡹⠃⠀⠘⣿⡇⠀⣸⠀⠀⠀⠀", 10))
+	fmt.Println(padding + colorPrint("⣴⡉⠀⠀⠀⠀⠀⠀⠀⢀⠇⠀⣠⡼⠀⠀⠀⠙⠎⠃⠀⠀⠈⠠⣄⠀⠀⢰⠁⠀⢈⡟⠉⠁⣴⡿⠋⠐⠁⣀⠞⡰⠉⠁⢸⡇⠀⠀⠀⠀", 10))
+	fmt.Println(padding + colorPrint("⢇⢣⡀⠀⠀⠀⢠⠀⠀⠸⠀⢠⣿⠃⠳⣄⠀⠀⢰⠀⠀⠀⠀⠀⠀⠉⡴⠀⠀⠀⣸⠁⠀⠀⠁⢰⠀⡄⢠⠏⡰⠁⠀⠀⣿⠁⠀⠀⠀⠀", 10))
+	fmt.Println(padding + colorPrint("⠈⠦⠳⡀⠀⠀⠀⣇⠀⡇⠀⢸⣿⠀⠀⠈⠑⠒⠚⠀⣦⠀⠀⠀⠀⣰⣁⠧⠔⠉⡏⠀⠀⠀⠀⢸⠀⡇⡜⣴⠁⠀⠀⠀⡟⠀⠀⠀⠀⠀", 10))
+	fmt.Println(padding + colorPrint("⠀⠀⠀⣬⣦⡀⠀⠸⡀⡇⠀⠀⠙⣆⠀⠀⠀⠀⠀⢀⡈⠳⣀⣠⠞⠁⣀⠀⠀⡜⠀⠀⠀⠀⠀⡜⡆⣷⠟⠈⡄⠀⠀⢸⠃⠀⠀⠀⠀⠀", 10))
+	fmt.Println(padding + colorPrint("⠀⠀⠀⠁⠙⠟⠦⡀⢳⡇⠀⠀⡆⠈⢆⠀⠀⠀⠀⠀⣀⣀⣈⣀⠀⠉⠀⠀⢸⡳⢄⠀⠀⠀⢀⠇⢱⡏⠀⠀⡇⠀⠀⣿⠀⠀⠀⠀⠀⠀", 10))
 }
