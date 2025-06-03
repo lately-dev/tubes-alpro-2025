@@ -4,7 +4,7 @@ import (
 	"os"
     "os/exec"
     "runtime"
-	"bufio"
+	//"bufio"
 	"strings"
 )
 
@@ -33,13 +33,13 @@ func main() {
 	var nData int = 7
 	
 	// Memasukkan beberapa data-data inventaris secara hard-core
-	alatLab[0] = inventaris{nama: "Baju", merek: "Lab", lokasi: "Ruang_1", kondisi: "Baik", tanggal: "01/01/2021", stok: 25, harga: 750000}
-	alatLab[1] = inventaris{nama: "Penggaris", merek: "Butterfly", lokasi: "Rak_1", kondisi: "Baik", tanggal: "22/03/2020", stok: 100, harga: 15000}
-	alatLab[2] = inventaris{nama: "Monitor", merek: "LG", lokasi: "Ruang_1", kondisi: "Baik", tanggal: "17/03/2019", stok: 50, harga: 820000}
-	alatLab[3] = inventaris{nama: "Meja", merek: "none", lokasi: "Ruang_2", kondisi: "Sedang", tanggal: "07/08/2010", stok: 3, harga: 2400000}
-	alatLab[4] = inventaris{nama: "Gunting", merek: "Kenko", lokasi: "Rak_2", kondisi: "Baik", tanggal: "04/09/2024", stok: 14, harga: 17500}
-	alatLab[5] = inventaris{nama: "Kabel_HDMI", merek: "none", lokasi: "Ruang_3", kondisi: "Buruk", tanggal: "09/12/2011", stok: 4, harga: 55000}
-	alatLab[6] = inventaris{nama: "NamaPanjangSekali", merek: "MerekPanjangSekali", lokasi: "LokasiPanjangSekali", kondisi: "KondisiPanjangSekali", tanggal: "09/12/2011", stok: 4, harga: 55000}
+	alatLab[0] = inventaris{nama: "Baju", merek: "Lab", lokasi: "Ruang_1", kondisi: "Baik", tanggal: "2021/01/01", stok: 25, harga: 750000}
+	alatLab[1] = inventaris{nama: "Penggaris", merek: "Butterfly", lokasi: "Rak_1", kondisi: "Baik", tanggal: "2020/03/22", stok: 100, harga: 15000}
+	alatLab[2] = inventaris{nama: "Monitor", merek: "LG", lokasi: "Ruang_1", kondisi: "Baik", tanggal: "2019/03/17", stok: 50, harga: 820000}
+	alatLab[3] = inventaris{nama: "Meja", merek: "none", lokasi: "Ruang_2", kondisi: "Sedang", tanggal: "2010/08/07", stok: 3, harga: 2400000}
+	alatLab[4] = inventaris{nama: "Gunting", merek: "Kenko", lokasi: "Rak_2", kondisi: "Baik", tanggal: "2024/09/04", stok: 14, harga: 17500}
+	alatLab[5] = inventaris{nama: "Kabel_HDMI", merek: "none", lokasi: "Ruang_3", kondisi: "Buruk", tanggal: "2011/12/09", stok: 4, harga: 55000}
+	alatLab[6] = inventaris{nama: "NamaPanjangSekali", merek: "MerekPanjangSekali", lokasi: "LokasiPanjangSekali", kondisi: "KondisiPanjangSekali", tanggal: "1/1/1", stok: 1000, harga: 55000}
 
 	menu(&alatLab, &nData)
 }
@@ -154,12 +154,18 @@ func pesanDataTerurut(pesan string) {
 	fmt.Println(padding + colorPrint("╚═════════════════════════════════════════════╝", 2))
 }
 
+func pesanHitungData(jumlah, warna int, pesan string) {
+	fmt.Println()
+	fmt.Println(padding + colorPrint("╔═════════════════════════════════════════════╗", warna))
+	fmt.Printf(padding + colorPrint("║    Ada %4d barang dengan kondisi %-6s    ║\n", warna), jumlah, pesan)
+	fmt.Println(padding + colorPrint("╚═════════════════════════════════════════════╝", warna))
+}
+
 func pesanTemplate(pesan string, warna int) {
 	fmt.Println()
 	fmt.Println(padding + colorPrint("╔═════════════════════════════════════════════╗", warna))
 	fmt.Printf(padding + colorPrint("║%45s║\n", warna), pesan)
 	fmt.Println(padding + colorPrint("╚═════════════════════════════════════════════╝", warna))
-
 }
 
 func pesanGalat() {
@@ -235,7 +241,7 @@ func konfirmasiMenu(pilihan *string, mode int) {
 			}
 		} else if mode == 2 {
 			switch *pilihan {
-			case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12":
+			case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14":
 				return
 			default:
 				pesanTemplate("  [!] Pilihan tidak valid!, mohon coba lagi  ", 1)
@@ -254,8 +260,6 @@ func konfirmasiMenu(pilihan *string, mode int) {
 // Prosedur untuk menambahkan data inventaris baru
 func dataBaru(data *arrInv, n *int) {
 	var hasil int
-	var reader = bufio.NewReader(os.Stdin)
-	//var inputRaw string
 	
 	for {
 		if *n >= maxArr {
@@ -264,29 +268,23 @@ func dataBaru(data *arrInv, n *int) {
 			fmt.Println(padding + colorPrint("║                     [!]                     ║", 1))
 			fmt.Println(padding + colorPrint("║ Data sudah penuh! Anda bisa hapus data lain ║", 1))
 			fmt.Println(padding + colorPrint("║           untuk menambah data baru          ║", 1))
-			fmt.Println(padding + colorPrint("║          (tekan Enter untuk keluar)         ║", 1))
+			fmt.Println(padding + colorPrint("║    (ketik apapun dan Enter untuk keluar)    ║", 1))
 			fmt.Println(padding + colorPrint("╚═════════════════════════════════════════════╝", 1))
 			
-			_, _ = reader.ReadString('\n')	// Blank identifier (_) untuk tidak menyimpan input
+			var dummyInput string
+			fmt.Scan(&dummyInput)
 			return
 		}
 		
 		headerTampilan()
 		footerTampilan("            Menu Utama > Data baru           ")
+		pesanTemplate("      Gunakan (_) underscore untuk spasi     ", 3)
 		fmt.Print(padding +  "Nama alat\t : ")
-		fmt.Scan(&data[*n].nama)
-		/*inputRaw, _ = reader.ReadString('\n')*/
-		
+		fmt.Scan(&data[*n].nama)	
 		fmt.Print(padding + "Merek alat\t : ")
 		fmt.Scan(&data[*n].merek)
-		/*inputRaw, _ = reader.ReadString('\n')
-		(*data)[*n].merek = strings.TrimSpace(inputRaw)*/
-		
 		fmt.Print(padding + "Lokasi alat\t : ")
 		fmt.Scan(&data[*n].lokasi)
-		/*inputRaw, _ = reader.ReadString('\n')
-		(*data)[*n].lokasi = strings.TrimSpace(inputRaw)*/
-		
 		fmt.Print(padding + "Kondisi alat\t : ")
 		fmt.Scan(&data[*n].kondisi)
 		/*if data[*n].kondisi != "Baik" || data[*n].kondisi != "baik" || data[*n].kondisi != "Sedang" || data[*n].kondisi != "sedang" || data[*n].kondisi != "Buruk" || data[*n].kondisi != "buruk" {
@@ -298,7 +296,7 @@ func dataBaru(data *arrInv, n *int) {
 		fmt.Scan(&data[*n].stok)
 		fmt.Print(padding + "Harga alat\t : ")
 		fmt.Scan(&data[*n].harga)
-		fmt.Print(padding + "Tanggal pembelian (hh/bb/tttt): ")
+		fmt.Print(padding + "Tanggal pembelian (tttt/bb/hh): ")
 		fmt.Scan(&data[*n].tanggal)
 		
 		*n = *n + 1
@@ -333,7 +331,10 @@ func ubahData(data *arrInv, n *int) {
 		
 		if idx >= 0 {
 			tabelTampilan(*data, idx)
-			pesanTemplate("     [i] Isi perubahan data di bawah ini     ", 3)
+			fmt.Println(padding + colorPrint("╔═════════════════════════════════════════════╗", 3))
+			fmt.Println(padding + colorPrint("║     [i] Isi perubahan data di bawah ini     ║", 3))
+			fmt.Println(padding + colorPrint("║      Gunakan (_) underscore untuk spasi     ║", 3))
+			fmt.Println(padding + colorPrint("╚═════════════════════════════════════════════╝", 3))
 			fmt.Print(padding +  "Nama alat\t : ")
 			fmt.Scan(&dataDiubah[0].nama)
 			fmt.Print(padding + "Merek alat\t : ")
@@ -536,6 +537,7 @@ func urutData(data *arrInv, n int) {
 			return
 		} else {
 			fmt.Println(padding + colorPrint("╠═════════════════════════════════════════════╣", 3))
+			fmt.Println(padding + colorPrint("║               Selection Sort                ║", 3))
 			fmt.Println(padding + colorPrint("║ 1. Urutkan dari nama (A-Z)                  ║", 3))
 			fmt.Println(padding + colorPrint("║ 2. Urutkan dari nama (Z-A)                  ║", 3))
 			fmt.Println(padding + colorPrint("║ 3. Urutkan dari merek (A-Z)                 ║", 3))
@@ -544,30 +546,62 @@ func urutData(data *arrInv, n int) {
 			fmt.Println(padding + colorPrint("║ 6. Urutkan dari lokasi (Z-A)                ║", 3))
 			fmt.Println(padding + colorPrint("║ 7. Urutkan dari kondisi (A-Z)               ║", 3))
 			fmt.Println(padding + colorPrint("║ 8. Urutkan dari kondisi (Z-A)               ║", 3))
+			fmt.Println(padding + colorPrint("╠═════════════════════════════════════════════╣", 3))
+			fmt.Println(padding + colorPrint("║               Insertion Sort                ║", 3))
 			fmt.Println(padding + colorPrint("║ 9. Urutkan dari stok (menaik)               ║", 3))
 			fmt.Println(padding + colorPrint("║ 10. Urutkan dari stok (menurun)             ║", 3))
 			fmt.Println(padding + colorPrint("║ 11. Urutkan dari harga (menaik)             ║", 3))
 			fmt.Println(padding + colorPrint("║ 12. Urutkan dari harga (menurun)            ║", 3))
+			fmt.Println(padding + colorPrint("║ 13. Urutkan dari tanggal (menaik)           ║", 3))
+			fmt.Println(padding + colorPrint("║ 14. Urutkan dari tanggal (menurun)          ║", 3))
 			fmt.Println(padding + colorPrint("║ 0. Kembali                                  ║", 3))
 			fmt.Println(padding + colorPrint("╚═════════════════════════════════════════════╝", 3))
 		
 			konfirmasiMenu(&pilihan, 2)
-			
-			selectionSort(data, n, pilihan)
-			
+						
 			switch pilihan {
-			case "1", "2":
+			case "1":
+				selectionSort(data, n, "1")
 				pesanDataTerurut("nama   ")
-			case "3", "4":
+			case "2":
+				selectionSort(data, n, "2")
+				pesanDataTerurut("nama   ")
+			case "3":
+				selectionSort(data, n, "3")
+				pesanDataTerurut("merek  ")			
+			case "4":
+				selectionSort(data, n, "4")
 				pesanDataTerurut("merek  ")
-			case "5", "6":
+			case "5":
+				selectionSort(data, n, "5")
 				pesanDataTerurut("lokasi ")
-			case "7", "8":
+			case "6":
+				selectionSort(data, n, "6")
+				pesanDataTerurut("lokasi ")
+			case "7":
+				selectionSort(data, n, "7")
 				pesanDataTerurut("kondisi")
-			case "9", "10":
+			case "8":
+				selectionSort(data, n, "8")
+				pesanDataTerurut("kondisi")
+			case "9":
+				insertionSort(data, n, "1")
 				pesanDataTerurut("stok   ")
-			case "11", "12":
+			case "10":
+				insertionSort(data, n, "2")
+				pesanDataTerurut("stok   ")
+			case "11":
+				insertionSort(data, n, "3")
 				pesanDataTerurut("harga  ")
+			case "12":
+				insertionSort(data, n, "4")
+				pesanDataTerurut("harga  ")
+			case "13":
+				insertionSort(data, n, "5")
+				pesanDataTerurut("tanggal")
+			case "14":
+				insertionSort(data, n, "6")
+				pesanDataTerurut("tanggal")
 			case "0":
 				return
 			default:
@@ -602,53 +636,37 @@ func selectionSort(data *arrInv, n int, x string) {
 		for i < n {
 			switch x {
 			case "1":
-			if (*data)[i].nama < (*data)[idx].nama{
-				idx = i
-			}
+				if (*data)[i].nama < (*data)[idx].nama{
+					idx = i
+				}
 			case "2":
-			if (*data)[i].nama > (*data)[idx].nama{
-				idx = i
-			}
+				if (*data)[i].nama > (*data)[idx].nama{
+					idx = i
+				}
 			case "3":
-			if (*data)[i].merek < (*data)[idx].merek{
-				idx = i
-			}
+				if (*data)[i].merek < (*data)[idx].merek{
+					idx = i
+				}
 			case "4":
-			if (*data)[i].merek > (*data)[idx].merek{
-				idx = i
-			}
+				if (*data)[i].merek > (*data)[idx].merek{
+					idx = i
+				}
 			case "5":
-			if (*data)[i].lokasi < (*data)[idx].lokasi{
-				idx = i
-			}
+				if (*data)[i].lokasi < (*data)[idx].lokasi{
+					idx = i
+				}
 			case "6":
-			if (*data)[i].lokasi > (*data)[idx].lokasi{
-				idx = i
-			}
+				if (*data)[i].lokasi > (*data)[idx].lokasi{
+					idx = i
+				}
 			case "7":
-			if (*data)[i].kondisi < (*data)[idx].kondisi{
-				idx = i
-			}
+				if (*data)[i].kondisi < (*data)[idx].kondisi{
+					idx = i
+				}
 			case "8":
-			if (*data)[i].kondisi > (*data)[idx].kondisi{
-				idx = i
-			}
-			case "9":
-			if (*data)[i].stok < (*data)[idx].stok{
-				idx = i
-			}
-			case "10":
-			if (*data)[i].stok > (*data)[idx].stok{
-				idx = i
-			}
-			case "11":
-			if (*data)[i].harga < (*data)[idx].harga{
-				idx = i
-			}
-			case "12":
-			if (*data)[i].harga > (*data)[idx].harga{
-				idx = i
-			}
+				if (*data)[i].kondisi > (*data)[idx].kondisi{
+					idx = i
+				}
 			}
 			i++ 
 		}
@@ -657,6 +675,51 @@ func selectionSort(data *arrInv, n int, x string) {
 		(*data)[pass - 1] = (*data)[idx]
 		(*data)[idx] = temp
 		pass++
+	}
+}
+
+// Prosedur untuk mengubah urutan data menggunakan Insertion Sort
+func insertionSort(data *arrInv, n int, x string) {
+	var i, j int
+	var temp inventaris
+	
+	for i = 1; i < n; i++ {
+		temp = data[i]
+		j = i - 1
+		
+		switch x {
+		case "1":
+			for j >= 0 && data[j].stok > temp.stok {
+				data[j+1] = data[j]
+				j--
+			}
+		case "2":
+			for j >= 0 && data[j].stok < temp.stok {
+				data[j+1] = data[j]
+				j--
+			}
+		case "3":
+			for j >= 0 && data[j].harga > temp.harga {
+				data[j+1] = data[j]
+				j--
+			}
+		case "4":
+			for j >= 0 && data[j].harga < temp.harga {
+				data[j+1] = data[j]
+				j--
+			}
+		case "5":
+			for j >= 0 && data[j].tanggal > temp.tanggal {
+				data[j+1] = data[j]
+				j--
+			}
+		case "6":
+			for j >= 0 && data[j].tanggal < temp.tanggal {
+				data[j+1] = data[j]
+				j--
+			}
+		}
+		data[j+1] = temp	
 	}
 }
 
@@ -679,8 +742,9 @@ func menuHitung(data arrInv, n int) {
 		} else {
 			fmt.Println(padding + colorPrint("╠═════════════════════════════════════════════╣", 3))
 			fmt.Println(padding + colorPrint("║ 1. Hitung kondisi barang 'baik'             ║", 3))
-			fmt.Println(padding + colorPrint("║ 2. Hitung kondisi barang 'buruk'            ║", 3))
-			fmt.Println(padding + colorPrint("║ 3. Hitung nilai kerugian barang 'buruk'     ║", 3))
+			fmt.Println(padding + colorPrint("║ 2. Hitung kondisi barang 'sedang'           ║", 3))
+			fmt.Println(padding + colorPrint("║ 3. Hitung kondisi barang 'buruk'            ║", 3))
+			fmt.Println(padding + colorPrint("║ 4. Hitung nilai kerugian barang 'buruk'     ║", 3))
 			fmt.Println(padding + colorPrint("║ 0. Kembali                                  ║", 3))
 			fmt.Println(padding + colorPrint("╚═════════════════════════════════════════════╝", 3))
 
@@ -688,15 +752,17 @@ func menuHitung(data arrInv, n int) {
 			
 			switch pilihan {
 			case "1":
-				fmt.Println()
-				fmt.Println(padding + "╔═════════════════════════════════════════════╗")
-				fmt.Printf(padding + "║     Ada %4d barang dengan kondisi baik     ║\n", hitungKondisi(data, n, "Baik"))
-				fmt.Println(padding + "╚═════════════════════════════════════════════╝")
+				pesanHitungData(hitungKondisi(data, n, "Baik"), 2, "baik  ")
 			case "2":
+				pesanHitungData(hitungKondisi(data, n, "Sedang"), 3, "sedang")
+			case "3":
+				pesanHitungData(hitungKondisi(data, n, "Buruk"), 1, "buruk ")
+			case "4":
 				fmt.Println()
-				fmt.Println(padding + "╔═════════════════════════════════════════════╗")
-				fmt.Printf(padding + "║     Ada %4d barang dengan kondisi buruk    ║\n", hitungKondisi(data, n, "Buruk"))
-				fmt.Println(padding + "╚═════════════════════════════════════════════╝")
+				fmt.Println(padding + colorPrint("╔═════════════════════════════════════════════╗", 1))
+				fmt.Println(padding + colorPrint("║      Kerugian barang 'buruk' mencapai       ║", 1))
+				fmt.Printf(padding + colorPrint("║               %15.2f               ║\n", 1), hitungKerugian(data, n))
+				fmt.Println(padding + colorPrint("╚═════════════════════════════════════════════╝", 1))
 			case "0":
 				return
 			}
@@ -721,11 +787,23 @@ func hitungKondisi(data arrInv, n int, kondisi string) int {
 	
 	for i := 0; i < n; i++ {
 		if data[i].kondisi == kondisi {
-			jumlahKondisi++
+			jumlahKondisi = jumlahKondisi + data[i].stok
 		}
 	}
 	
 	return jumlahKondisi
+}
+
+func hitungKerugian(data arrInv, n int) float64 {
+	var jumlahRugi float64
+	
+	for i := 0; i < n; i++ {
+		if data[i].kondisi == "Buruk" {
+			jumlahRugi = jumlahRugi + (data[i].harga * float64(hitungKondisi(data, n, "Buruk")))
+		}
+	}
+	
+	return jumlahRugi
 }
 
 // Easter-egg :)
