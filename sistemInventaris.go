@@ -39,21 +39,21 @@ func main() {
 	alatLab[3] = inventaris{nama: "Meja", merek: "none", lokasi: "Ruang_2", kondisi: "Sedang", tanggal: "2010/08/07", stok: 3, harga: 2400000}
 	alatLab[4] = inventaris{nama: "Gunting", merek: "Kenko", lokasi: "Rak_2", kondisi: "Baik", tanggal: "2024/09/04", stok: 14, harga: 17500}
 	alatLab[5] = inventaris{nama: "Kabel_HDMI", merek: "none", lokasi: "Ruang_3", kondisi: "Buruk", tanggal: "2011/12/09", stok: 4, harga: 55000}
-	alatLab[6] = inventaris{nama: "NamaPanjangSekali", merek: "MerekPanjangSekali", lokasi: "LokasiPanjangSekali", kondisi: "KondisiPanjangSekali", tanggal: "1/1/1", stok: 1000, harga: 55000}
+	alatLab[6] = inventaris{nama: "NamaPanjangSekali", merek: "MerekPanjangSekali", lokasi: "LokasiPanjangSekali", kondisi: "KondisiPanjangSekali", tanggal: "0001/1/1", stok: 1000, harga: 55000}
 
 	menu(&alatLab, &nData)
 }
 
 // Fungsi untuk membersihkan tampilan CMD/Terminal
 func clearScreen() {
-    var cmd *exec.Cmd
-	if runtime.GOOS == "windows" {
-		cmd = exec.Command("cmd", "/c", "cls")
+    var cmd *exec.Cmd //menampung data  dari fungsi di library os/exec
+	if runtime.GOOS == "windows" { //mencari os windows
+		cmd = exec.Command("cmd", "/c", "cls") // perintah untuk menghapus tampilan sebelumnya
 	} else {
-		cmd = exec.Command("clear")
+		cmd = exec.Command("clear") // perintah untuk menghapus tampilan sebelumnya tetapi untuk os selain windows  
 	}
-	cmd.Stdout = os.Stdout
-	cmd.Run()
+	cmd.Stdout = os.Stdout // untuk menampilkan output dari kondisi yang sudah di buat
+	cmd.Run() // untuk mengeksekusi perintah
 }
 
 // Fungsi untuk mengubah warna tulisan terminal
@@ -73,19 +73,19 @@ func colorPrint(pesan string, color int) string {
 }
 
 // Prosedur untuk menampilkan pilihan menu utama
-func menu(alatLab *arrInv, nData *int) {
+func menu(alatLab *arrInv, nData *int) { // mempunyai 2 parameter , tipe data arrInv dan int
 	var pilihan string
 	
-	for {
+	for { //perulangan terus menerus hingga user menginput 0
 		clearScreen()
 		headerTampilan()
 		fmt.Println(padding + colorPrint("║                 Menu Utama                  ║", 3))
 		fmt.Println(padding + colorPrint("╠══════════════════════╦══════════════════════╣", 3))
-		fmt.Println(padding + colorPrint("║ 1. Data baru         ║ 6. Urutkan data      ║", 3))
-		fmt.Println(padding + colorPrint("║ 2. Ubah data         ║ 7. Perhitungan       ║", 3))
-		fmt.Println(padding + colorPrint("║ 3. Hapus data        ║ 0. Keluar            ║", 3))
-		fmt.Println(padding + colorPrint("║ 4. Cari data         ║                      ║", 3))
-		fmt.Println(padding + colorPrint("║ 5. Tampilkan data    ║                      ║", 3))
+		fmt.Println(padding + colorPrint("║ 1. Data baru         ║ 6. Tampilkan data    ║", 3))
+		fmt.Println(padding + colorPrint("║ 2. Ubah data         ║ 7. Urutkan data      ║", 3))
+		fmt.Println(padding + colorPrint("║ 3. Hapus data        ║ 8. Perhitungan       ║", 3))
+		fmt.Println(padding + colorPrint("║ 4. Cari data         ║ 0. Keluar            ║", 3))
+		fmt.Println(padding + colorPrint("║ 5. Cari data (binary)║                      ║", 3))
 		fmt.Println(padding + colorPrint("╚══════════════════════╩══════════════════════╝", 3))
 
 		konfirmasiMenu(&pilihan, 1)
@@ -105,10 +105,13 @@ func menu(alatLab *arrInv, nData *int) {
 			cariData(*alatLab, *nData)
 		case "5":
 			clearScreen()
-			tampilkanData(*alatLab, *nData)
+			cariDataBinary(alatLab, *nData)
 		case "6":
-			urutData(alatLab, *nData)
+			clearScreen()
+			tampilkanData(*alatLab, *nData)
 		case "7":
+			urutData(alatLab, *nData)
+		case "8":
 			clearScreen()
 			menuHitung(*alatLab, *nData)
 		case "0":
@@ -203,15 +206,15 @@ func potongString(kata string, maksKata int) string {
 }
 
 // Prosedur menjalankan konfirmasi apakah pilihan menu ini tetap dijalankan atau dihentikan
-func konfirmasiInput(pesan string, hasil *int) {
-	var konfirmasi string
+func konfirmasiInput(pesan string, hasil *int) { //prosedur ini mengembsalikan nilai hasil jadi 1 jika user input n dan 2 jika user input y
+	var konfirmasi string // variabel baru untuk menyimpan y/n
 
 	for {
-		fmt.Printf(padding + colorPrint("%s> ", 3), pesan)
+		fmt.Printf(padding + colorPrint("%s> ", 3), pesan) //menampilkan pesan
 		fmt.Scan(&konfirmasi)
 		
 		if konfirmasi == "n" || konfirmasi == "N" {
-			*hasil = 1
+			*hasil = 1 //nilai hasil jadi 1
 			return
 		} else if konfirmasi == "y" || konfirmasi == "Y" {
 			*hasil = 2
@@ -234,7 +237,7 @@ func konfirmasiMenu(pilihan *string, mode int) {
 		
 		if mode == 1 {
 			switch *pilihan {
-			case "0", "1", "2", "3", "4", "5", "6", "7":
+			case "0", "1", "2", "3", "4", "5", "6", "7", "8":
 				return
 			default:
 				pesanTemplate("  [!] Pilihan tidak valid!, mohon coba lagi  ", 1)
@@ -304,12 +307,12 @@ func dataBaru(data *arrInv, n *int) {
 		fmt.Println()
 		konfirmasiInput("Masukkan data baru lagi? (y/n)", &hasil)
 		
-		if hasil == 1 {
+		if hasil == 1 { // hasil menjadi 1 dan keluar dari program
 			return
-		} else if hasil == 2 {
+		} else if hasil == 2 { // jika user input y maka hasil jadi 2 , clearscreen dan mengulang program
 			clearScreen()
 		} else {
-			pesanGalat()
+			pesanGalat()  // jika hasilnya bukan 1 atau 2 maka akan muncul pesan galat maka akan keluar dari program
 			return
 		}
 	}
@@ -347,7 +350,7 @@ func ubahData(data *arrInv, n *int) {
 			fmt.Scan(&dataDiubah[0].stok)
 			fmt.Print(padding + "Harga alat\t : ")
 			fmt.Scan(&dataDiubah[0].harga)
-			fmt.Print(padding + "Tanggal pembelian (hh/bb/tttt): ")
+			fmt.Print(padding + "Tanggal pembelian (tttt/bb/hh): ")
 			fmt.Scan(&dataDiubah[0].tanggal)
 			
 			data[idx].nama = dataDiubah[0].nama
@@ -425,7 +428,7 @@ func hapusData(data *arrInv, n *int) {
 	}
 }
 
-// Prosedur untuk mencari data dengan menggunakan logika if-else ketika data ditemukan
+// Prosedur untuk mencari data dengan menggunakan logika if-else dan sequentialSearch ketika data ditemukan
 func cariData(data arrInv, n int) {
 	var x string
 	var idx, hasil int
@@ -459,6 +462,45 @@ func cariData(data arrInv, n int) {
 	}
 }
 
+// Prosedur untuk mencari data dengan menggunakan logika if-else dan binarySearchTanggal ketika data ditemukan
+func cariDataBinary(data *arrInv, n int) {headerTampilan()
+	var x string
+	var idx, hasil int
+	
+	for {
+		footerTampilan("Menu Utama > Cari data dengan tanggal(binary)")
+		fmt.Print(padding + "Masukkan tanggal yang dicari (format tttt/bb/hh): ")
+		fmt.Scan(&x)
+		
+		for i := 0; i < n; i++ {
+			(*data)[i].tanggal = padTanggal((*data)[i].tanggal)
+		}
+		x = padTanggal(x)
+		
+		insertionSortForBinary(data, n)
+		idx = binarySearchTanggal(data, n, x)
+
+		
+		if idx >= 0 {
+			tabelTampilan(*data, idx)
+			pesanTemplate("             [✓] Data ditemukan              ", 2)
+		} else {
+			pesanTemplate("          [!] Data tidak ditemukan           ", 1)
+		}
+		
+		konfirmasiInput("Cari data lagi? (y/n)", &hasil)
+		
+		if hasil == 1 {
+			clearScreen()
+			return
+		} else if hasil == 2 {
+			clearScreen()
+		} else {
+			pesanGalat()
+			return
+		}
+	}
+}
 
 // Fungsi untuk mencari data dengan metode Sequential Search
 func sequentialSearch(data arrInv, n int, x string) int {
@@ -473,6 +515,61 @@ func sequentialSearch(data arrInv, n int, x string) int {
 	}
 	
 	return idx
+}
+
+// Fungsi untuk normalisasi tanggal menjadi format "YYYY/MM/DD"
+func padTanggal(t string) string {
+	var y, m, d int
+	fmt.Sscanf(t, "%d/%d/%d", &y, &m, &d)
+	return fmt.Sprintf("%04d/%02d/%02d", y, m, d)
+}
+
+// Fungsi binary search dengan insert posisi (juga dipakai di insertion sort)
+func binarySearchTanggalInsertPos(data *arrInv, item inventaris, low, high int) int {
+	for low <= high {
+		mid := low + (high-low)/2
+		if (*data)[mid].tanggal < item.tanggal {
+			low = mid + 1
+		} else {
+			high = mid - 1
+		}
+	}
+	return low
+}
+
+// Fungsi pencarian Binary berdasarkan tanggal
+func binarySearchTanggal(data *arrInv, n int, target string) int {
+	var low int = 0
+	var high int = n - 1
+	var mid int
+    for low <= high {
+        mid = low + (high-low)/2
+        if (*data)[mid].tanggal == target {
+            return mid 
+        } else if (*data)[mid].tanggal < target {
+            low = mid + 1
+        } else {
+            high = mid - 1
+        }
+    }
+    return -1
+}
+
+// Fungsi untuk pengurutan khusus binary
+func insertionSortForBinary(data *arrInv, n int) {
+	var i, j, loc int
+	var temp inventaris
+
+	for i = 1; i < n; i++ {
+		temp = (*data)[i]
+		loc = binarySearchTanggalInsertPos(data, temp, 0, i-1)
+		j = i - 1
+		for j >= loc {
+			(*data)[j+1] = (*data)[j]
+			j--
+		}
+		(*data)[loc] = temp
+	}
 }
 
 // Prosedur untuk melihat seluruh data aktif dengan template tabel
@@ -807,24 +904,6 @@ func hitungKerugian(data arrInv, n int) float64 {
 }
 
 // Easter-egg :)
-func catImage() {
-	fmt.Println(padding + "░░░░░░░░░░░░░░░░░░░░░▄▀░░▌")
-	fmt.Println(padding + "░░░░░░░░░░░░░░░░░░░▄▀▐░░░▌")
-	fmt.Println(padding + "░░░░░░░░░░░░░░░░▄▀▀▒▐▒░░░▌")
-	fmt.Println(padding + "░░░░░▄▀▀▄░░░▄▄▀▀▒▒▒▒▌▒▒░░▌")
-	fmt.Println(padding + "░░░░▐▒░░░▀▄▀▒▒▒▒▒▒▒▒▒▒▒▒▒█")
-	fmt.Println(padding + "░░░░▌▒░░░░▒▀▄▒▒▒▒▒▒▒▒▒▒▒▒▒▀▄")
-	fmt.Println(padding + "░░░░▐▒░░░░░▒▒▒▒▒▒▒▒▒▌▒▐▒▒▒▒▒▀▄")
-	fmt.Println(padding + "░░░░▌▀▄░░▒▒▒▒▒▒▒▒▐▒▒▒▌▒▌▒▄▄▒▒▐")
-	fmt.Println(padding + "░░░▌▌▒▒▀▒▒▒▒▒▒▒▒▒▒▐▒▒▒▒▒█▄█▌▒▒▌")
-	fmt.Println(padding + "░▄▀▒▐▒▒▒▒▒▒▒▒▒▒▒▄▀█▌▒▒▒▒▒▀▀▒▒▐░░░▄")
-	fmt.Println(padding + "▀▒▒▒▒▌▒▒▒▒▒▒▒▄▒▐███▌▄▒▒▒▒▒▒▒▄▀▀▀▀")
-	fmt.Println(padding + "▒▒▒▒▒▐▒▒▒▒▒▄▀▒▒▒▀▀▀▒▒▒▒▄█▀░░▒▌▀▀▄▄")
-	fmt.Println(padding + "▒▒▒▒▒▒█▒▄▄▀▒▒▒▒▒▒▒▒▒▒▒░░▐▒▀▄▀▄░░░░▀")
-	fmt.Println(padding + "▒▒▒▒▒▒▒█▒▒▒▒▒▒▒▒▒▄▒▒▒▒▄▀▒▒▒▌░░▀▄")
-	fmt.Println(padding + "▒▒▒▒▒▒▒▒▀▄▒▒▒▒▒▒▒▒▀▀▀▀▒▒▒▄▀")
-}
-
 func byeImage() {
 	fmt.Println(padding + colorPrint("⠀⠀⠀⠀⠀⠀⠀⠀ ⠀⠀⠀⠀⠀⠀⠀⠀⠀ ⠀⠀⠀⠀⠀⠀⣀⣠⣤⣴⣶⣦⣤⣄⡀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀", 10))
 	fmt.Println(padding + colorPrint("⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣤⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀", 10))
