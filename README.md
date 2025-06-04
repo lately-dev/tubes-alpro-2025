@@ -23,7 +23,15 @@ Program ini dibangun untuk memenuhi kebutuhan pengelolaan inventaris yang secara
 	- Mengkalkulasikan nilai barang inventaris
 
 ## Struktur program
-* Akan diisi kedepannya
+Program terdiri dari total 33 fungsi utama yang saling bekerja sama untuk menjalankan seluruh fitur aplikasi. Fungsi-fungsi utama tersebut antara lain:
+- main — Fungsi utama aplikasi
+- dataBaru — Menambah data inventaris baru
+- ubahData — Mengubah data inventaris yang sudah ada
+- hapusData — Menghapus data inventaris
+- cariData — Mencari data inventaris berdasarkan kriteria tertentu
+- tampilkanData — Menampilkan daftar data inventaris dalam format tabel
+- urutData — Mengurutkan data inventaris berdasarkan pilihan pengguna
+- menuHitung — Menu untuk melakukan perhitungan nilai dan kondisi inventaris
 
 ## Cara menggunakan program
 1. Jalankan aplikasi melalui terminal/command prompt dengan perintah go run sistemInventaris.go
