@@ -26,10 +26,17 @@ Program ini dibangun untuk memenuhi kebutuhan pengelolaan inventaris yang secara
 * Akan diisi kedepannya
 
 ## Cara menggunakan program
-* Akan diisi kedepannya
+1. Jalankan aplikasi melalui terminal/command prompt dengan perintah go run sistemInventaris.go
+2. Pilih menu yang diinginkan untuk menambah, mengedit, menghapus, mencari, atau mengurutkan data inventaris
+3. Masukkan data sesuai instruksi yang muncul di layar (contoh: format tanggal harus YYYY/MM/DD)
+4. Gunakan fitur pencarian untuk mencari data berdasarkan nama atau tanggal pembelian barang
+5. Gunakan fitur pengurutan untuk menampilkan data berdasarkan kriteria yang dipilih
+6. Ikuti instruksi dan konfirmasi pada layar untuk melanjutkan atau keluar dari program
 
 ## Batasan Program
-- Program menggunakan array statis dengan kapasitas hingga 1000 data
+- Program menggunakan array statis dengan kapasitas hingga 1000 data inventaris
+- Format tanggal wajib mengikuti YYYY/MM/DD untuk keakuratan pencarian dan pengurutan
+- Antarmuka program berbasis teks (CLI), belum mendukung GUI
 
 # Pembagian Tugas
 ## Hafiza
